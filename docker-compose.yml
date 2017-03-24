@@ -1,0 +1,35 @@
+version: '2'
+services:
+  judge:
+    image: app
+    env_file: .env
+    links:
+      - db
+      - redis
+    ports:
+      - "80:80"
+    depends_on:
+      - migrations
+      - redis
+
+  db:
+    image: mariadb:10.1.16
+    env_file: .env
+    expose:
+      - 3306
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+
+  migrations:
+    build: .
+    image: app
+    env_file: .env
+    command: bash -c "bash wait-for-db.sh && python3 manage.py db upgrade"
+    links:
+      - db
+    depends_on:
+      - db
+
+  redis:
+    restart: "no"
+    image: redis

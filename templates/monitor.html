@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Judge SocketIO Monitor</title>
+</head>
+<body>
+<div id="monitor"></div>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+    var socket = io(window.location.host);
+    socket.emit('sub_monitor');
+
+    var onevent = socket.onevent;
+    socket.onevent = function (packet) {
+        var args = packet.data || [];
+        onevent.call(this, packet); // original call
+        packet.data = ['*'].concat(args);
+        onevent.call(this, packet); // additional call to catch-all
+    };
+
+    var monitor_div = document.getElementById('monitor');
+    socket.on('*', function (command) {
+        args = [].slice.apply(arguments).splice(1);
+        args_display = args.join(' ');
+        if (args_display.length > 100) {
+            args_display = args_display.substring(0, 100) + '...'
+        }
+        monitor_div.appendChild(document.createTextNode(command + ' - ' + args_display));
+        monitor_div.appendChild(document.createElement('br'))
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+eventlet
+flask
+Flask-Migrate
+Flask-Script
+Flask-SocketIO
+Flask-SQLAlchemy
+gunicorn
+pymysql
+pytest
+python-dotenv
+redis
+requests
+SQLAlchemy==1.1.0b2
+-e git://github.com/chaosagent/python-digitalocean.git#egg=digitalocean
